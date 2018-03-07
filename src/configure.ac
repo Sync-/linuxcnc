@@ -102,10 +102,10 @@ AS_IF([test "x$ac_cv_boost_python" = xyes],
 CPPFLAGS=$saved_CPPFLAGS
 LIBS=$saved_LIBS
 AC_LANG_POP([C++])
-AS_IF([test "x$ac_cv_boost_python" = xyes && test "x$BOOST_PYTHON_LIBS" != x],
-      [AC_DEFINE([HAVE_BOOST_PYTHON], [1],
-                 [define if the Boost::Python headers and library are available])],
-      [AC_MSG_ERROR([[boost::python is required to build $PACKAGE_NAME]])])
+#AS_IF([test "x$ac_cv_boost_python" = xyes && test "x$BOOST_PYTHON_LIBS" != x],
+#      [AC_DEFINE([HAVE_BOOST_PYTHON], [1],
+#                 [define if the Boost::Python headers and library are available])],
+#      [AC_MSG_ERROR([[boost::python is required to build $PACKAGE_NAME]])])
 AC_SUBST([BOOST_PYTHON_LIBS])
 ])
 
@@ -1387,7 +1387,7 @@ install with "sudo apt-get install tclx"])
 fi
 
 AC_MSG_CHECKING([for python pango and cairo modules])
-if $PYTHON -c 'import pango,cairo'; then
+if $PYTHON -c 'import cairo; from gi.repository import Pango'; then
     AC_MSG_RESULT([found])
 else
     AC_MSG_RESULT(no)

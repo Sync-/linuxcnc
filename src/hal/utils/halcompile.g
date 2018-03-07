@@ -121,16 +121,16 @@ def parse(filename):
     f = open(filename).read()
     if '\r' in f:
         if require_unix_line_endings:
-            raise SystemExit, "%s:0: Error: File contains DOS-style or Mac-style line endings." % filename
+            raise SystemExit("%s:0: Error: File contains DOS-style or Mac-style line endings." % filename)
         else:
             sys.stderr.write("%s:0: Warning: File contains DOS-style or Mac-style line endings." % filename)
         f = open(filename, "rU").read()
     a, b = f.split("\n;;\n", 1)
     p = _parse('File', a + "\n\n", filename)
-    if not p: raise SystemExit, 1
+    if not p: raise SystemExit(1)
     if require_license:
         if not finddoc('license'):
-            raise SystemExit, "%s:0: License not specified" % filename
+            raise SystemExit("%s:0: License not specified" % filename)
     return a, b
 
 dirmap = {'r': 'HAL_RO', 'rw': 'HAL_RW', 'in': 'HAL_IN', 'out': 'HAL_OUT', 'io': 'HAL_IO' }
@@ -508,8 +508,8 @@ static int comp_id;
             if has_personality:
                 f.write("        r = export(buf, i, personality[i%16]);\n")
             else:
-                f.write("        r = export(buf, i);\n")
-            f.write("    }\n")
+                print >>f, "        r = export(buf, i);"
+            print >>f, "    }"
         else:
             f.write("    if(count && names[0]) {\n")
             f.write("        rtapi_print_msg(RTAPI_MSG_ERR," \
@@ -701,7 +701,7 @@ def find_modinc():
         if os.path.exists(e):
             modinc = e
             return e
-    raise SystemExit, "Unable to locate Makefile.modinc"
+    raise SystemExit("Unable to locate Makefile.modinc")
 
 def build_usr(tempdir, filename, mode, origfilename):
     binname = os.path.basename(os.path.splitext(filename)[0])
@@ -716,7 +716,7 @@ def build_usr(tempdir, filename, mode, origfilename):
     f.close()
     result = os.system("cd %s && make -S %s" % (tempdir, binname))
     if result != 0:
-        raise SystemExit, os.WEXITSTATUS(result) or 1
+        raise SystemExit(os.WEXITSTATUS(result) or 1)
     output = os.path.join(tempdir, binname)
     if mode == INSTALL:
         shutil.copy(output, os.path.join(BASE, "bin", binname))
@@ -738,7 +738,7 @@ def build_rt(tempdir, filename, mode, origfilename):
         target = "modules"
     result = os.system("cd %s && make -S %s" % (tempdir, target))
     if result != 0:
-        raise SystemExit, os.WEXITSTATUS(result) or 1
+        raise SystemExit(os.WEXITSTATUS(result) or 1)
     if mode == COMPILE:
         for extension in ".ko", ".so", ".o":
             kobjname = os.path.splitext(filename)[0] + extension
@@ -746,7 +746,7 @@ def build_rt(tempdir, filename, mode, origfilename):
                 shutil.copy(kobjname, os.path.basename(kobjname))
                 break
         else:
-            raise SystemExit, "Unable to copy module from temporary directory"
+            raise SystemExit("Unable to copy module from temporary directory")
 
 def finddoc(section=None, name=None):
     for item in docs:
@@ -954,7 +954,7 @@ def process(filename, mode, outfilename):
         a, b = parse(filename)
         base_name = os.path.splitext(os.path.basename(outfilename))[0]
         if comp_name != base_name:
-            raise SystemExit, "Component name (%s) does not match filename (%s)" % (comp_name, base_name)
+            raise SystemExit("Component name (%s) does not match filename (%s)" % (comp_name, base_name))
 
         f = open(outfilename, "w")
 
@@ -963,15 +963,15 @@ def process(filename, mode, outfilename):
 
         if options.get("userspace"):
             if functions:
-                raise SystemExit, "Userspace components may not have functions"
+                raise SystemExit("Userspace components may not have functions")
         if not pins:
-            raise SystemExit, "Component must have at least one pin"
+            raise SystemExit("Component must have at least one pin")
         prologue(f)
         lineno = a.count("\n") + 3
 
         if options.get("userspace"):
             if functions:
-                raise SystemExit, "May not specify functions with a userspace component."
+                raise SystemExit("May not specify functions with a userspace component.")
             f.write("#line %d \"%s\"\n" % (lineno, filename))
             f.write(b)
         else:
@@ -984,7 +984,7 @@ def process(filename, mode, outfilename):
                 f.write(b)
                 f.write("}\n")
             else:
-                raise SystemExit, "Must use FUNCTION() when more than one function is defined"
+                raise SystemExit("Must use FUNCTION() when more than one function is defined")
         epilogue(f)
         f.close()
 
@@ -1007,7 +1007,7 @@ Usage:
     [sudo] %(name)s --install --userspace cfile...
     [sudo] %(name)s --install --userspace pyfile...
            %(name)s --print-modinc
-""" % {'name': os.path.basename(sys.argv[0])})
+""" % {'name': os.path.basename(sys.argv[0])}
     raise SystemExit(exitval)
 
 def main():
@@ -1049,17 +1049,17 @@ def main():
             require_license = True
         if k in ("-o", "--outfile"):
             if len(args) != 1:
-                raise SystemExit, "Cannot specify -o with multiple input files"
+                raise SystemExit("Cannot specify -o with multiple input files")
             outfile = v 
         if k in ("-?", "-h", "--help"):
             usage(0)
 
     if outfile and mode != PREPROCESS and mode != DOCUMENT:
-        raise SystemExit, "Can only specify -o when preprocessing or documenting"
+        raise SystemExit("Can only specify -o when preprocessing or documenting")
 
     if mode == MODINC:
         if args:
-            raise SystemExit("Can not specify input files when using --print-modinc")
+            raise SystemExit,("Can not specify input files when using --print-modinc")
         print (find_modinc())
         return 0
 
@@ -1106,14 +1106,14 @@ def main():
                 finally:
                     shutil.rmtree(tempdir) 
             else:
-                raise SystemExit, "Unrecognized file type for mode %s: %r" % (modename[mode], f)
+                raise SystemExit("Unrecognized file type for mode %s: %r" % (modename[mode], f))
         except:
             ex = traceback.format_exc()
             try:
                 os.unlink(outfile)
             except: # os.error:
                 pass
-            raise SystemExit(ex)
+            raise ex_type(ex_value, exc_tb)
 if __name__ == '__main__':
     main()
 
