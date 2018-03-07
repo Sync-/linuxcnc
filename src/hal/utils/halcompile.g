@@ -388,8 +388,8 @@ static int comp_id;
     if has_personality:
         f.write("    inst->_personality = personality;\n")
     if options.get("extra_setup"):
-        f.write("    r = extra_setup(inst, prefix, extra_arg);\n")
-        f.write("    if(r != 0) return r;\n")
+        print >>f, "    r = extra_setup(inst, prefix, extra_arg);"
+        print >>f, "    if(r != 0) return r;"
         # the extra_setup() function may have changed the personality
         if has_personality:
             f.write("    personality = inst->_personality;\n")
@@ -509,6 +509,12 @@ static int comp_id;
                 f.write("        r = export(buf, i, personality[i%16]);\n")
             else:
                 print >>f, "        r = export(buf, i);"
+                print >>f, "    }"
+        else:
+            print >>f, "    if(count && names[0]) {"
+            print >>f, "        rtapi_print_msg(RTAPI_MSG_ERR," \
+                            "\"count= and names= are mutually exclusive\\n\");"
+            print >>f, "        return -EINVAL;"
             print >>f, "    }"
         else:
             f.write("    if(count && names[0]) {\n")
@@ -546,23 +552,23 @@ static int comp_id;
             f.write("    }\n")
 
         if options.get("constructable") and not options.get("singleton"):
-            f.write("    hal_set_constructor(comp_id, export_1);\n")
-        f.write("    if(r) {\n")
+            print >>f, "    hal_set_constructor(comp_id, export_1);"
+        print >>f, "    if(r) {"
         if options.get("extra_cleanup"):
-            f.write("    extra_cleanup();\n")
-        f.write("        hal_exit(comp_id);\n")
-        f.write("    } else {\n")
-        f.write("        hal_ready(comp_id);\n")
-        f.write("    }\n")
-        f.write("    return r;\n")
-        f.write("}\n")
+            print >>f, "    extra_cleanup();"
+        print >>f, "        hal_exit(comp_id);"
+        print >>f, "    } else {"
+        print >>f, "        hal_ready(comp_id);"
+        print >>f, "    }"
+        print >>f, "    return r;"
+        print >>f, "}"
 
-        f.write("\n")
-        f.write("void rtapi_app_exit(void) {\n")
+        print >>f
+        print >>f, "void rtapi_app_exit(void) {"
         if options.get("extra_cleanup"):
-            f.write("    extra_cleanup();\n")
-        f.write("    hal_exit(comp_id);\n")
-        f.write("}\n")
+            print >>f, "    extra_cleanup();"
+        print >>f, "    hal_exit(comp_id);"
+        print >>f, "}"
 
     if options.get("userspace"):
         f.write("static void user_mainloop(void);\n")
