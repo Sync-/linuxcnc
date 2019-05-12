@@ -16,9 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import os, sys, tempfile, shutil, getopt, time, traceback
-BASE = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
-sys.path.insert(0, os.path.join(BASE, "lib", "python"))
+
 
 %%
 parser Hal:
@@ -100,6 +98,10 @@ parser Hal:
     rule OptSValue: SValue {{ return SValue }}
                 | {{ return 1 }}
 %%
+
+import os, sys, tempfile, shutil, getopt, time, traceback
+BASE = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+sys.path.insert(0, os.path.join(BASE, "lib", "python"))
 
 mp_decl_map = {'int': 'RTAPI_MP_INT', 'dummy': None}
 
@@ -388,8 +390,8 @@ static int comp_id;
     if has_personality:
         f.write("    inst->_personality = personality;\n")
     if options.get("extra_setup"):
-        print >>f, "    r = extra_setup(inst, prefix, extra_arg);"
-        print >>f, "    if(r != 0) return r;"
+        f.write("    r = extra_setup(inst, prefix, extra_arg);")
+        f.write("    if(r != 0) return r;")
         # the extra_setup() function may have changed the personality
         if has_personality:
             f.write("    personality = inst->_personality;\n")
@@ -508,14 +510,8 @@ static int comp_id;
             if has_personality:
                 f.write("        r = export(buf, i, personality[i%16]);\n")
             else:
-                print >>f, "        r = export(buf, i);"
-                print >>f, "    }"
-        else:
-            print >>f, "    if(count && names[0]) {"
-            print >>f, "        rtapi_print_msg(RTAPI_MSG_ERR," \
-                            "\"count= and names= are mutually exclusive\\n\");"
-            print >>f, "        return -EINVAL;"
-            print >>f, "    }"
+                f.write("        r = export(buf, i);")
+                f.write("    }")
         else:
             f.write("    if(count && names[0]) {\n")
             f.write("        rtapi_print_msg(RTAPI_MSG_ERR," \
@@ -552,23 +548,22 @@ static int comp_id;
             f.write("    }\n")
 
         if options.get("constructable") and not options.get("singleton"):
-            print >>f, "    hal_set_constructor(comp_id, export_1);"
-        print >>f, "    if(r) {"
+            f.write("    hal_set_constructor(comp_id, export_1);")
+        f.write("    if(r) {")
         if options.get("extra_cleanup"):
-            print >>f, "    extra_cleanup();"
-        print >>f, "        hal_exit(comp_id);"
-        print >>f, "    } else {"
-        print >>f, "        hal_ready(comp_id);"
-        print >>f, "    }"
-        print >>f, "    return r;"
-        print >>f, "}"
+            f.write("    extra_cleanup();")
+        f.write("        hal_exit(comp_id);")
+        f.write("    } else {")
+        f.write("        hal_ready(comp_id);")
+        f.write("    }")
+        f.write("    return r;")
+        f.write("}")
 
-        print >>f
-        print >>f, "void rtapi_app_exit(void) {"
+        f.write("void rtapi_app_exit(void) {")
         if options.get("extra_cleanup"):
-            print >>f, "    extra_cleanup();"
-        print >>f, "    hal_exit(comp_id);"
-        print >>f, "}"
+            f.write("    extra_cleanup();")
+        f.write("    hal_exit(comp_id);")
+        f.write("}")
 
     if options.get("userspace"):
         f.write("static void user_mainloop(void);\n")
@@ -808,7 +803,7 @@ def document(filename, outfilename):
     f.write(".de TQ\n.br\n.ns\n.TP \\\\$1\n..\n\n")
 
     f.write(".SH NAME\n")
-    doc = finddoc('component')    
+    doc = finddoc('component')
     if doc and doc[2]:
         if '\n' in doc[2]:
             firstline, rest = doc[2].split('\n', 1)
@@ -1013,7 +1008,7 @@ Usage:
     [sudo] %(name)s --install --userspace cfile...
     [sudo] %(name)s --install --userspace pyfile...
            %(name)s --print-modinc
-""" % {'name': os.path.basename(sys.argv[0])}
+""" % {'name': os.path.basename(sys.argv[0])})
     raise SystemExit(exitval)
 
 def main():
@@ -1065,7 +1060,7 @@ def main():
 
     if mode == MODINC:
         if args:
-            raise SystemExit,("Can not specify input files when using --print-modinc")
+            raise SystemExit("Can not specify input files when using --print-modinc")
         print (find_modinc())
         return 0
 
@@ -1087,7 +1082,7 @@ def main():
                 if not os.path.isdir(manpath):
                     manpath = os.path.join(BASE, "docs/man/man9")
                 outfile = os.path.join(manpath, basename + ".9")
-                print "INSTALLDOC", outfile
+                print("INSTALLDOC", outfile)
                 document(f, outfile)            
             elif f.endswith(".comp"):
                 process(f, mode, outfile)
@@ -1099,7 +1094,7 @@ def main():
                 try: os.unlink(outfile)
                 except os.error: pass
                 open(outfile, "w").writelines(lines)
-                os.chmod(outfile, 0555)
+                os.chmod(outfile, 0o555)
             elif f.endswith(".c") and mode != PREPROCESS:
                 initialize()
                 tempdir = tempfile.mkdtemp()
