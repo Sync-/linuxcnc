@@ -436,13 +436,13 @@ int emcPluginCall(EMC_EXEC_PLUGIN_CALL *call_msg)
 //     return status;
 // }
 
-extern "C" void initemctask();
-extern "C" void initinterpreter();
-extern "C" void initemccanon();
+// extern "C" PyObject* initemctask();
+// extern "C" PyObject* initinterpreter();
+// extern "C" PyObject* initemccanon();
 struct _inittab builtin_modules[] = {
-    { (char *) "interpreter", initinterpreter },
-    { (char *) "emccanon", initemccanon },
-    { (char *) "emctask", initemctask },
+    // { (char *) "interpreter", initinterpreter },
+    // { (char *) "emccanon", initemccanon },
+    // { (char *) "emctask", initemctask },
     // any others...
     { NULL, NULL }
 };

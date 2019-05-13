@@ -204,7 +204,7 @@ static PyObject *pyglDrawPixels(PyObject *s, PyObject *o) {
 static PyObject *pyglGenLists(PyObject *s, PyObject *o) {
     int range;
     if(!PyArg_ParseTuple(o, "i:glGenLists", &range)) return NULL;
-    return PyInt_FromLong(glGenLists(range));
+    return PyLong_FromLong(glGenLists(range));
 }
 
 static PyObject *pyglGetDoublev(PyObject *s, PyObject *o) {
@@ -236,7 +236,7 @@ static PyObject *pyglGetIntegerv(PyObject *s, PyObject *o) {
         case GL_LIST_INDEX: {
             int r;
             glGetIntegerv(what, &r);
-            return PyInt_FromLong(r);
+            return PyLong_FromLong(r);
         }
         case GL_VIEWPORT: {
             int d[4];
@@ -244,7 +244,7 @@ static PyObject *pyglGetIntegerv(PyObject *s, PyObject *o) {
             int i;
             glGetIntegerv(what, d);
             for(i=0; i<4; i++) {
-                PyList_SetItem(r, i, PyInt_FromLong(d[i]));
+                PyList_SetItem(r, i, PyLong_FromLong(d[i]));
             }
             return r;
         }
@@ -265,16 +265,16 @@ static PyObject *pyglInterleavedArrays(PyObject *s, PyObject *o) {
         return NULL;
     }
 
-    if(!PyString_Check(str)) {
+    if(!PyUnicode_Check(str)) {
         PyErr_Format( PyExc_TypeError, "Expected string" );
         return NULL;
     }
 
-    // size = min(8192, PyString_GET_SIZE(str));
-    size = PyString_GET_SIZE(str);
+    // size = min(8192, PyBytes_GET_SIZE(str));
+    size = PyBytes_GET_SIZE(str);
     if(buf == NULL) buf = malloc(size);
     else buf = realloc(buf, size);
-    memcpy(buf, PyString_AS_STRING(str), size);
+    memcpy(buf, PyBytes_AS_STRING(str), size);
     glInterleavedArrays(format, stride, buf);
 
     CHECK_ERROR;
@@ -371,7 +371,7 @@ static PyObject *pyglReadPixels(PyObject *s, PyObject *o) {
     sz = width * height * 4;
     buf = malloc(sz);
     glReadPixels(x,y,width,height,format,type,buf);
-    res = PyString_FromStringAndSize(buf, sz); 
+    res = PyBytes_FromStringAndSize(buf, sz); 
     free(buf);
     return res;
 }
@@ -660,7 +660,7 @@ static PyObject *pyglRenderMode( PyObject *s, PyObject *o) {
             PyTuple_SetItem(record, 1,
                     PyFloat_FromDouble(select_buffer[i++] / 214748364.));
             for(j=0; namelen; namelen--, j++, i++)
-                PyList_SetItem(name, j, PyInt_FromLong(select_buffer[i]));
+                PyList_SetItem(name, j, PyLong_FromLong(select_buffer[i]));
             PyTuple_SetItem(record, 2, name);
             PyList_Append(r, record);
             Py_DECREF(record);
@@ -779,7 +779,7 @@ METH(glReadPixels, "read pixels"),
 {NULL, NULL, 0, 0},
 };
 
-#define CONST(x) PyObject_SetAttrString(m, #x, PyInt_FromLong(x))
+#define CONST(x) PyObject_SetAttrString(m, #x, PyLong_FromLong(x))
 void initminigl(void) {
     PyObject *m = \
     Py_InitModule3("minigl", methods, "Mini version of pyopengl for axis");
