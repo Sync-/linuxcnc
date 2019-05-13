@@ -253,13 +253,13 @@ class Pages:
         #self.w.pp2_direction.set_active(self.d.pp2_direction)
         #self.w.pp3_direction.set_active(self.d.pp3_direction)
         if self.d.number_pports == 3:
-             self.w.radio_pp3.set_active(True)
+            self.w.radio_pp3.set_active(True)
         elif self.d.number_pports == 2:
-             self.w.radio_pp2.set_active(True)
+            self.w.radio_pp2.set_active(True)
         elif self.d.number_pports == 1:
-             self.w.radio_pp1.set_active(True)
+            self.w.radio_pp1.set_active(True)
         else:
-             self.w.radio_none.set_active(True)
+            self.w.radio_none.set_active(True)
         if self.d.frontend == self._p._AXIS : self.w.GUIAXIS.set_active(True)
         elif self.d.frontend == self._p._TKLINUXCNC: self.w.GUITKLINUXCNC.set_active(True)
         elif self.d.frontend == self._p._TOUCHY: self.w.GUITOUCHY.set_active(True)
@@ -296,16 +296,16 @@ class Pages:
         self.page_set_state('pport1',self.d.number_pports>0)
         self.page_set_state('pport2',self.d.number_pports>1)
         if self.d.number_pports == 0 and self.d.number_mesa== 0 :
-           self.a.warning_dialog(_("You need to designate a parport and/or mesa I/O device before continuing."),True)
-           return True 
+            self.a.warning_dialog(_("You need to designate a parport and/or mesa I/O device before continuing."),True)
+            return True 
         #self.d.pp2_direction = self.w.pp2_direction.get_active()
         #self.d.pp3_direction = self.w.pp3_direction.get_active()
         if self.w.GUIAXIS.get_active():
-           self.d.frontend = self._p._AXIS
+            self.d.frontend = self._p._AXIS
         elif self.w.GUITKLINUXCNC.get_active():
-           self.d.frontend = self._p._TKLINUXCNC
+            self.d.frontend = self._p._TKLINUXCNC
         elif self.w.GUITOUCHY.get_active():
-           self.d.frontend = self._p._TOUCHY
+            self.d.frontend = self._p._TOUCHY
 
     # BASE callbacks
     def on_mesa_checkbutton_toggled(self, *args):
@@ -317,16 +317,16 @@ class Pages:
         if j and not i:
             self.w.mesa1_checkbutton.set_active(False)
             self.w.mesa1_boardtitle.set_sensitive(False)
-        
+
     def on_pp1_checkbutton_toggled(self, *args): 
         i = self.w.pp1_checkbutton.get_active()   
         self.w.pp1_direction.set_sensitive(i)
         self.w.ioaddr1.set_sensitive(i)
         if i == 0:
-           self.w.pp2_checkbutton.set_active(i)
-           self.w.ioaddr2.set_sensitive(i)
-           self.w.pp3_checkbutton.set_active(i)
-           self.w.ioaddr3.set_sensitive(i)
+            self.w.pp2_checkbutton.set_active(i)
+            self.w.ioaddr2.set_sensitive(i)
+            self.w.pp3_checkbutton.set_active(i)
+            self.w.ioaddr3.set_sensitive(i)
 
     def on_pp2_checkbutton_toggled(self, *args):
         i = self.w.pp2_checkbutton.get_active()
@@ -336,14 +336,14 @@ class Pages:
         self.w.pp2_direction.set_sensitive(i)
         self.w.ioaddr2.set_sensitive(i)
         if i == 0:
-           self.w.pp3_checkbutton.set_active(i)
-           self.w.ioaddr3.set_sensitive(i)
+            self.w.pp3_checkbutton.set_active(i)
+            self.w.ioaddr3.set_sensitive(i)
 
     def on_pp3_checkbutton_toggled(self, *args): 
         i = self.w.pp3_checkbutton.get_active() 
         if self.w.pp2_checkbutton.get_active() == 0:
-          i = 0  
-          self.w.pp3_checkbutton.set_active(0)
+            i = 0  
+            self.w.pp3_checkbutton.set_active(0)
         self.w.pp3_direction.set_sensitive(i)
         self.w.ioaddr3.set_sensitive(i)      
 
@@ -445,7 +445,7 @@ class Pages:
             self.w[i+"position"].set_active(self.d[i+"position"][0])
             self.w[i+"xpos"].set_value(self.d[i+"position"][1])
             self.w[i+"ypos"].set_value(self.d[i+"position"][2])
-        
+
         if os.path.exists(self._p.THEMEDIR):
             self.a.get_installed_themes()
         self.on_gladevcp_toggled()
@@ -487,14 +487,14 @@ class Pages:
         self.d.pyvcp = self.w.pyvcp.get_active()
         self.d.pyvcpconnect = self.w.pyvcpconnect.get_active() 
         if self.d.pyvcp == True:
-           if self.w.pyvcpblank.get_active() == True:
-              self.d.pyvcpname = "blank.xml"
-              self.d.pyvcphaltype = 0
-           if self.w.pyvcp1.get_active() == True:
-              self.d.pyvcpname = "spindle.xml"
-              self.d.pyvcphaltype = 1
-           if self.w.pyvcpexist.get_active() == True:
-              self.d.pyvcpname = "pyvcp-panel.xml"
+            if self.w.pyvcpblank.get_active() == True:
+                self.d.pyvcpname = "blank.xml"
+                self.d.pyvcphaltype = 0
+            if self.w.pyvcp1.get_active() == True:
+                self.d.pyvcpname = "spindle.xml"
+                self.d.pyvcphaltype = 1
+            if self.w.pyvcpexist.get_active() == True:
+                self.d.pyvcpname = "pyvcp-panel.xml"
         for i in ("touchyabscolor","touchyrelcolor","touchydtgcolor","touchyerrcolor"):
             if not self.w[i].get_active():
                 self.d[i] = "default"
@@ -537,7 +537,7 @@ class Pages:
 
     # callbacks
     def on_loadladder_clicked(self, *args):self.t.load_ladder(self)
- 
+
     def on_halui_toggled(self, *args):
         i= self.w.halui.get_active()
         self.w.haluitable.set_sensitive(i)
@@ -781,7 +781,7 @@ class Pages:
         self.w.mvoexpander.set_sensitive(self.w.mvo_useswitch.get_active())
         self.w.soexpander.set_sensitive(self.w.so_useswitch.get_active())
         self.w.joystickjogbox.set_sensitive(self.w.joystickjog.get_active())
-        
+
         i =  self.w.incrselect.get_active()
         for j in range(1,16):
             self.w["incrlabel%d"% j].set_sensitive(i)

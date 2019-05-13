@@ -478,7 +478,7 @@ class Private_Data:
             "7i76-m0-t","7i76-m0-r","7i76-m0-e", "7i76-m2-t","7i76-m2-r","7i76-m2-e",
             "7i77-m0-t","7i77-m0-r","7i77-m0-e","7i77-m3-t","7i77-m3-r","7i77-m3-e",
             "7i73-m1-t","7i73-m1-r","7i73-m1-e","7i84-m0-t","7i84-m0-r","7i84-m0-e","7i84-m3-t","7i84-m3-r","7i84-m3-e"]
- 
+
         self.human_sserial_names = [ [_("Unused Channel"),[]],[_("8i20 Amplifier Card"),[]],
             [ _("7i64 I/O Card"),[]],[ _("7i69 I/O Card"),[]],
             [ _("7i70 I/O Card"),[]],[ _("7i71 I/O Card"),[]],
