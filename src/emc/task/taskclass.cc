@@ -400,13 +400,13 @@ int return_int(const char *funcname, PyObject *retval)
 	return -1;
     }
     if ((retval != Py_None) &&
-	(PyInt_Check(retval))) {
-	return PyInt_AS_LONG(retval);
+	(PyLong_Check(retval))) {
+	return PyLong_AsLong(retval);
     } else {
 	emcOperatorError(0, "return_int(%s): expected int return value, got '%s' (%s)",
 			 funcname,
-			 PyString_AsString(retval),
-			 retval->ob_type->tp_name);
+			 PyBytes_AS_STRING(retval),
+             retval->ob_type->tp_name);
 	Py_XDECREF(retval);
 	return -1;
     }
