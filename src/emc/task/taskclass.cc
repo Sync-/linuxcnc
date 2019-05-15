@@ -305,7 +305,7 @@ static const char *instance_name = "task_instance";
 int emcTaskOnce(const char *filename)
 {
     bp::object retval;
-    bp::tuple arg;
+ //   bp::tuple arg;
     bp::dict kwarg;
 
     // initialize the Python plugin singleton
@@ -400,12 +400,12 @@ int return_int(const char *funcname, PyObject *retval)
 	return -1;
     }
     if ((retval != Py_None) &&
-	(PyInt_Check(retval))) {
-	return PyInt_AS_LONG(retval);
+	(PyLong_Check(retval))) {
+	return PyLong_AS_LONG(retval);
     } else {
 	emcOperatorError(0, "return_int(%s): expected int return value, got '%s' (%s)",
 			 funcname,
-			 PyString_AsString(retval),
+			 PyBytes_AsString(retval),
 			 retval->ob_type->tp_name);
 	Py_XDECREF(retval);
 	return -1;
@@ -436,13 +436,13 @@ int emcPluginCall(EMC_EXEC_PLUGIN_CALL *call_msg)
 //     return status;
 // }
 
-extern "C" void initemctask();
-extern "C" void initinterpreter();
-extern "C" void initemccanon();
+extern "C" PyObject* PyInit_emctask();
+extern "C" PyObject* PyInit_interpreter();
+extern "C" PyObject* PyInit_emccanon();
 struct _inittab builtin_modules[] = {
-    { (char *) "interpreter", initinterpreter },
-    { (char *) "emccanon", initemccanon },
-    { (char *) "emctask", initemctask },
+    { (char *) "interpreter", PyInit_interpreter },
+    { (char *) "emccanon", PyInit_emccanon },
+    { (char *) "emctask", PyInit_emctask },
     // any others...
     { NULL, NULL }
 };
